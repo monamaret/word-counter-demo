@@ -9,9 +9,27 @@ int main() {
 
     std::ifstream file(filename);
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << std::endl;
+        std::cerr << "Error: Could not open file '" << filename << "'" << std::endl;
+        std::cerr << "Possible reasons:" << std::endl;
+        std::cerr << "  - File does not exist" << std::endl;
+        std::cerr << "  - Insufficient permissions" << std::endl;
+        std::cerr << "  - File is in use by another program" << std::endl;
+        std::cerr << "  - Invalid file path" << std::endl;
         return 1;
     }
+
+    // Check if file is readable
+    if (file.bad()) {
+        std::cerr << "Error: File stream is in a bad state" << std::endl;
+        return 1;
+    }
+
+    // Check if file is empty (optional warning)
+    file.seekg(0, std::ios::end);
+    if (file.tellg() == 0) {
+        std::cout << "Warning: File '" << filename << "' is empty" << std::endl;
+    }
+    file.seekg(0, std::ios::beg); // Reset to beginning
 
     int wordCount = 0;
     int lineCount = 0;
